@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <title>FlaskGPT — Espace d’analyse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+<header><div><span class="eyebrow">VOTRE ESPACE DE TRAVAIL IA</span><h1>FlaskGPT<span> / Analyse & conversations</span></h1></div><button id="new">Nouvelle conversation</button></header>
+<div id="error" role="alert" hidden></div>
+<div class="layout">
+  <aside>
+    <section><h2>Conversations</h2><label for="history">Historique de cette session</label><select id="history"></select><button id="clear" class="danger">Effacer et recommencer</button></section>
+    <section><h2>Spécialisation</h2><label for="domain">Domaine de l’assistant</label><select id="domain">{% for key,label in domains.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select><label for="specialty">Précision du domaine (facultatif)</label><input id="specialty" maxlength="150" placeholder="Ex. cybersécurité, comptabilité…"><button id="domain-save" class="secondary">Appliquer le domaine</button></section>
+    <section><h2>Sources & données</h2><p class="muted">Les passages cochés seront transmis au fournisseur IA lors de votre prochaine question.</p><form id="upload"><label for="file">Importer SQLite, CSV, TXT ou Markdown</label><input id="file" type="file" accept=".db,.sqlite,.sqlite3,.csv,.txt,.md" required><button type="submit" class="secondary">Importer et analyser</button></form><div id="sources"></div><label for="mode">Unité des passages</label><select id="mode"><option value="extraits">Extraits de 4 lignes</option><option value="lignes">Lignes</option><option value="paragraphes">Paragraphes</option></select><label for="count">Nombre par source (1 à 10)</label><input id="count" type="number" min="1" max="10" value="3"><p class="muted">Passages classés par mots communs avec la question. Au plus 8 sources, 30 000 caractères de contexte. Chaque passage est limité à 1 500 caractères.</p></section>
+  </aside>
+  <main>
+    <section class="conversation"><div class="section-head"><div><span class="eyebrow">CONVERSATION</span><h2 id="title">Nouvelle conversation</h2></div><span id="status" role="status">Prêt</span></div><div id="messages" aria-live="polite" aria-relevant="additions"></div><form id="prompt-form"><label for="prompt">Votre message</label><textarea id="prompt" rows="3" maxlength="12000" required placeholder="Posez une question ou explorez vos données…"></textarea><div class="form-bottom"><span class="muted">Les sources restent des données à vérifier.</span><button type="submit">Envoyer</button></div></form></section>
+    <section><div class="section-head"><h2>Performance & qualité</h2><span class="muted">Mesures par conversation</span></div><div id="metrics" class="metrics"></div><div class="scroll"><table><caption>Comparaison des requêtes</caption><thead><tr><th>Requête / modèle</th><th>État</th><th>Durée</th><th>1er fragment</th><th>Entrée</th><th>Sortie</th><th>Total tokens</th><th>Note</th></tr></thead><tbody id="runs"></tbody></table></div><p class="muted">Les tokens proviennent du fournisseur ; « n.d. » signifie non communiqué, y compris pour certains échecs. Les totaux connus peuvent donc être partiels.</p></section>
+    <section><h2>Téléchargements</h2><div class="actions"><button data-export="txt" class="secondary">Conversation TXT</button><button data-export="json" class="secondary">Conversation JSON</button><button data-export="pdf" class="secondary">Conversation PDF</button><button id="summary">Résumé PDF par IA</button></div><p class="muted">Le résumé déclenche une requête IA supplémentaire, comptabilisée dans les indicateurs.</p></section>
+    <section id="quality-panel"><h2>Qualité & gouvernance des données</h2><div id="quality"><p class="muted">Importez une base SQLite ou un CSV pour consulter ses indicateurs.</p></div></section>
+  </main>
+</div>
+<footer>Application locale • Historique associé à ce navigateur • Conformité réglementaire non évaluée</footer>
+</body>
+</html>
